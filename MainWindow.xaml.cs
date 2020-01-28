@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Net;
+using Microsoft.Win32;
+using VideoLibrary;
 
 namespace MyYoutubeDownloader
 {
@@ -21,16 +12,30 @@ namespace MyYoutubeDownloader
     /// </summary>
     public partial class MainWindow : Window
     {
+        private YouTube youtubeService;
+        private string DownloadFolder = Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}", String.Empty).ToString() + "\\";
+   
         public MainWindow()
         {
             InitializeComponent();
+            youtubeService = YouTube.Default;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (CheckURL(VideoUrl.Text))
+            var url = VideoUrl.Text;
+            if (CheckURL(url))
             {
-                MessageBox.Show("In developpement");
+                try
+                {
+                    var video = youtubeService.GetVideo(url);
+                    File.WriteAllBytes(DownloadFolder + video.FullName, video.GetBytes());
+                    MessageBox.Show("FINISH : " + DownloadFolder + video.FullName);
+                }
+                catch (Exception exception)
+                {
+                    MessageBox.Show(exception.ToString());
+                }
             }
             else
             {
