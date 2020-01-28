@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Net;
 
 namespace MyYoutubeDownloader
 {
@@ -27,7 +28,30 @@ namespace MyYoutubeDownloader
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (CheckURL(VideoUrl.Text))
+            {
+                MessageBox.Show("In developpement");
+            }
+            else
+            {
+                MessageBox.Show("URL is invalid");
+            }
+        }
 
+        private bool CheckURL(string url)
+        {
+            try
+            {
+                HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+                request.Method = "HEAD";
+                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                response.Close();
+                return (response.StatusCode == HttpStatusCode.OK);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
