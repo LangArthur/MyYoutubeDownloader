@@ -26,16 +26,7 @@ namespace MyYoutubeDownloader
             var url = VideoUrl.Text;
             if (CheckURL(url))
             {
-                try
-                {
-                    var video = youtubeService.GetVideo(url);
-                    File.WriteAllBytes(DownloadFolder + video.FullName, video.GetBytes());
-                    MessageBox.Show("FINISH : " + DownloadFolder + video.FullName);
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show(exception.ToString());
-                }
+                DownloadVideo(url);
             }
             else
             {
@@ -56,6 +47,20 @@ namespace MyYoutubeDownloader
             catch
             {
                 return false;
+            }
+        }
+
+        private void DownloadVideo(string url)
+        {
+            try
+            {
+                var video = youtubeService.GetVideo(url);
+                File.WriteAllBytes(DownloadFolder + video.FullName, video.GetBytes());
+                MessageBox.Show("FINISH : " + DownloadFolder + video.FullName);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString());
             }
         }
     }
