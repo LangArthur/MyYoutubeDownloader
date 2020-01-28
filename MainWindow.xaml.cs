@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 using Google.Apis.Auth.OAuth2;
 
 
-/// allez voir : https://github.com/flagbug/YoutubeExtractor/blob/master/YoutubeExtractor/ExampleApplication/Program.cs
+/// https://github.com/flagbug/YoutubeExtractor/blob/master/YoutubeExtractor/ExampleApplication/Program.cs
 /// https://www.youtube.com/watch?v=TnG3urCD_m0
 
 namespace MyYoutubeDownloader

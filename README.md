@@ -15,6 +15,7 @@ Tests are not available for now
 
 * [Visual Studio](https://visualstudio.microsoft.com/vs/)
 * [c# Visual Studio .gitIngonre](https://github.com/github/gitignore/blob/master/VisualStudio.gitignore)
+* [YoutubeExtractor](https://github.com/flagbug/YoutubeExtractor) - a .NET library for downloading Youtube videos.
 
 ## Author
 
