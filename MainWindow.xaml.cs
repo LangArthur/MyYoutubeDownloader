@@ -9,9 +9,6 @@ using VideoLibrary;
 
 namespace MyYoutubeDownloader
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private YouTube youtubeService;
@@ -76,35 +73,40 @@ namespace MyYoutubeDownloader
             try
             {
                 var videos = youtubeService.GetAllVideos(url);
-                string resolution = resolutionBox.SelectedItem.ToString();
+                ListBoxItem selectedRes = (ListBoxItem)resolutionBox.SelectedItem;
+                string resolution = selectedRes.Content.ToString();
                 bool highest = resolution == "highest" ? true : false;
                 YouTubeVideo selectVideo = null;
                 YouTubeVideo highestVideo = null;
-                foreach (var video in videos)
+                foreach (var v in videos)
                 {
-                    if (highestVideo == null)
-                        highestVideo = video;
-                    else if (highestVideo.Resolution < video.Resolution && video.Format.ToString() == defaultFormat)
+                    string currentFormat = v.Format.ToString().ToLower();
+                    if (currentFormat == defaultFormat && highestVideo == null)
+                        highestVideo = v;
+                    else if (currentFormat == defaultFormat && highestVideo.Resolution < v.Resolution)
                     {
-                        highestVideo = video;
+                        highestVideo = v;
                         if (highest)
                             selectVideo = highestVideo;
                     }
-                    if (video.Resolution.ToString() == resolution && video.Format.ToString() == defaultFormat)
-                        selectVideo = video;
+                    if (currentFormat == defaultFormat && v.Resolution.ToString() == resolution)
+                        selectVideo = v;
                 }
                 if (selectVideo == null)
                 {
                     MessageBox.Show("No video found with the selected resolution. Use resolution " + highestVideo.Resolution.ToString() + " instead.");
                     selectVideo = highestVideo;
                 }
-                //                    MessageBox.Show((videos.Resolution).ToString());
-                //                File.WriteAllBytes(DownloadFolder + video.FullName, video.GetBytes());
-                //                MessageBox.Show("FINISH : " + DownloadFolder + video.FullName);
+
+/*                var video = youtubeService.GetVideo(url); // gets a Video object with info about the video
+                MessageBox.Show(selectVideo.GetBytes().Length + "|" + video.GetBytes().Length);
+                File.WriteAllBytes(DownloadFolder + video.FullName, video.GetBytes());*/
+                File.WriteAllBytes(DownloadFolder + "custom_ " + selectVideo.FullName, selectVideo.GetBytes());
+                MessageBox.Show("FINISH : " + DownloadFolder + selectVideo.FullName);
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.ToString());
+                MessageBox.Show("An error occured : " + exception.ToString());
             }
         }
     }
