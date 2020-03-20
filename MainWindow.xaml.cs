@@ -40,7 +40,7 @@ namespace MyYoutubeDownloader
             switch(CheckURL(url))
             {
                 case HttpStatusCode.OK:
-                    getAudio(url);
+                    DownloadVideo(url);
                     break;
                 case HttpStatusCode.ServiceUnavailable:
                     DisplayError("erreur");
@@ -73,60 +73,67 @@ namespace MyYoutubeDownloader
         {
             try
             {
-                var videos = youtubeService.GetAllVideos(url);
-                ListBoxItem selectedRes = (ListBoxItem)resolutionBox.SelectedItem;
-                string resolution = selectedRes.Content.ToString();
-                bool highest = resolution == "highest" ? true : false;
-                YouTubeVideo selectVideo = null;
-                YouTubeVideo highestVideo = null;
-                foreach (var v in videos)
-                {
-                    string currentFormat = v.Format.ToString().ToLower();
-                    if (currentFormat == defaultFormat && highestVideo == null)
-                        highestVideo = v;
-                    else if (currentFormat == defaultFormat && highestVideo.Resolution < v.Resolution)
-                    {
-                        highestVideo = v;
-                        if (highest)
-                            selectVideo = highestVideo;
-                    }
-                    if (currentFormat == defaultFormat && v.Resolution.ToString() == resolution)
-                        selectVideo = v;
-                }
-                if (selectVideo == null)
-                {
-                    MessageBox.Show("No video found with the selected resolution. Use resolution " + highestVideo.Resolution.ToString() + " instead.");
-                    selectVideo = highestVideo;
-                }
-
-/*                var video = youtubeService.GetVideo(url); // gets a Video object with info about the video
-                MessageBox.Show(selectVideo.GetBytes().Length + "|" + video.GetBytes().Length);
-                File.WriteAllBytes(DownloadFolder + video.FullName, video.GetBytes());*/
-                File.WriteAllBytes(DownloadFolder + "custom_ " + selectVideo.FullName, selectVideo.GetBytes());
-                MessageBox.Show("FINISH : " + DownloadFolder + selectVideo.FullName);
+                var audio = getAudio(url);
+                var video = getVideo(url);
+                File.WriteAllBytes(DownloadFolder + "audio_ " + audio.FullName, audio.GetBytes());
+                File.WriteAllBytes(DownloadFolder + "video_ " + video.FullName, video.GetBytes());
+                MessageBox.Show("FINISH : " + DownloadFolder + audio.FullName);
             }
             catch (Exception exception)
             {
                 MessageBox.Show("An error occured : " + exception.ToString());
             }
         }
-        
-        private void getAudio(string url)
+
+        private void basicDownload(string url)
+        {
+            var video = youtubeService.GetVideo(url); 
+            File.WriteAllBytes(DownloadFolder + video.FullName, video.GetBytes());
+        }
+
+        private YouTubeVideo getVideo(string url)
+        {
+            var videos = youtubeService.GetAllVideos(url);
+            ListBoxItem selectedRes = (ListBoxItem)resolutionBox.SelectedItem;
+            string resolution = selectedRes.Content.ToString();
+            bool highest = resolution == "highest" ? true : false;
+            YouTubeVideo selectVideo = null;
+            YouTubeVideo highestVideo = null;
+            foreach (var v in videos)
+            {
+                string currentFormat = v.Format.ToString().ToLower();
+                if (currentFormat == defaultFormat && highestVideo == null)
+                    highestVideo = v;
+                else if (currentFormat == defaultFormat && highestVideo.Resolution < v.Resolution)
+                {
+                    highestVideo = v;
+                    if (highest)
+                        selectVideo = highestVideo;
+                }
+                if (currentFormat == defaultFormat && v.Resolution.ToString() == resolution)
+                    selectVideo = v;
+            }
+            if (selectVideo == null)
+            {
+                MessageBox.Show("No video found with the selected resolution. Use resolution " + highestVideo.Resolution.ToString() + " instead.");
+                selectVideo = highestVideo;
+            }
+            return (selectVideo);
+        }
+
+        private YouTubeVideo getAudio(string url)
         {
             var videoInfos = youtubeService.GetAllVideos(url);
             YouTubeVideo toDownload = null;
-            //var possibleBitrates = videoInfos.Where(i => i.AdaptiveKind == AdaptiveKind.Audio).Select(i => i.AudioBitrate);
-            //var possibleResolutions = videoInfos.Where(i => i.AdaptiveKind == AdaptiveKind.Video).Select(i => i.Resolution);
             foreach (var video in videoInfos)
             {
                 if (video.AdaptiveKind == AdaptiveKind.Audio)
                 {
                     toDownload = video;
+                    break;
                 }
             }
-            File.WriteAllBytes(DownloadFolder + "audio_ " + toDownload.FullName, toDownload.GetBytes());
-            //OR
-            //var downloadInfo = videoInfos.Where(i => i.AudioFormat == AudioFormat.Aac && i.AudioBitrate == 128).FirstOrDefault();
+            return toDownload;
         }
     }
 }
