@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Net;
 using System.Configuration;
+using System.Collections;
 using Microsoft.Win32;
 using VideoLibrary;
 
@@ -39,7 +40,7 @@ namespace MyYoutubeDownloader
             switch(CheckURL(url))
             {
                 case HttpStatusCode.OK:
-                    DownloadVideo(url);
+                    getAudio(url);
                     break;
                 case HttpStatusCode.ServiceUnavailable:
                     DisplayError("erreur");
@@ -108,6 +109,24 @@ namespace MyYoutubeDownloader
             {
                 MessageBox.Show("An error occured : " + exception.ToString());
             }
+        }
+        
+        private void getAudio(string url)
+        {
+            var videoInfos = youtubeService.GetAllVideos(url);
+            YouTubeVideo toDownload = null;
+            //var possibleBitrates = videoInfos.Where(i => i.AdaptiveKind == AdaptiveKind.Audio).Select(i => i.AudioBitrate);
+            //var possibleResolutions = videoInfos.Where(i => i.AdaptiveKind == AdaptiveKind.Video).Select(i => i.Resolution);
+            foreach (var video in videoInfos)
+            {
+                if (video.AdaptiveKind == AdaptiveKind.Audio)
+                {
+                    toDownload = video;
+                }
+            }
+            File.WriteAllBytes(DownloadFolder + "audio_ " + toDownload.FullName, toDownload.GetBytes());
+            //OR
+            //var downloadInfo = videoInfos.Where(i => i.AudioFormat == AudioFormat.Aac && i.AudioBitrate == 128).FirstOrDefault();
         }
     }
 }
