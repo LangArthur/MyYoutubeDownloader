@@ -7,6 +7,10 @@ My goal with this project is to try creating windows application with c#. I neve
 
 You only need a internet connection. Currently, the converter work as a Visual Studio solution
 
+## Status
+
+!! The project is in developpement for the moment : downloading a video put audio and video in seperate file.
+
 ## Running the tests
 
 Tests are not available for now
