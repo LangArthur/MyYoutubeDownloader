@@ -9,7 +9,7 @@ You only need a internet connection. Currently, the converter work as a Visual S
 
 ## Status
 
-!! The project is in developpement for the moment : downloading a video put audio and video in seperate file.
+:warning: The project is in developpement for the moment : downloading a video put audio and video in seperate file.
 
 ## Running the tests
 
