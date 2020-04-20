@@ -8,6 +8,8 @@ using System.Collections;
 using Microsoft.Win32;
 using VideoLibrary;
 
+// https://github.com/mrklintscher/YouTubeSearch/blob/master/ExampleApplication/Program.cs
+
 namespace MyYoutubeDownloader
 {
     public partial class MainWindow : Window
